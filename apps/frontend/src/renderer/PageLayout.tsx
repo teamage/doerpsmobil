@@ -14,9 +14,9 @@ export function PageLayout(props: { pageContext: Store<PageContext> }) {
   return (
     <PageContextProvider pageContext={props.pageContext}>
       <Layout>
-        <div class="basis-[250px] shrink-0 flex flex-col pl-4">
-          <Link href="/">Home</Link>
-          <Link href="/about">About</Link>
+        <div class='basis-[250px] shrink-0 flex flex-col pl-4'>
+          <Link href='/'>Home</Link>
+          <Link href='/about'>About</Link>
         </div>
 
         <Page />
@@ -34,5 +34,5 @@ function Page() {
 }
 
 function Layout(props: { children: JSX.Element }) {
-  return <div class="w-screen h-screen flex">{props.children}</div>;
+  return <div class='w-screen h-screen flex'>{props.children}</div>;
 }

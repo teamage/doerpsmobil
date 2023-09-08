@@ -32,11 +32,11 @@ export function Page() {
   });
 
   return (
-    <div class="grow flex flex-col gap-4 justify-center items-center">
+    <div class='grow flex flex-col gap-4 justify-center items-center'>
       <h1>Home</h1>
       <span>data for {pageContext.urlParsed.search['counter']} :</span>
-      <span class="w-[200px] h-5">{data.loading ? 'loading' : data()}</span>
-      <div class="flex gap-4">
+      <span class='w-[200px] h-5'>{data.loading ? 'loading' : data()}</span>
+      <div class='flex gap-4'>
         <button onClick={previous}>prev</button>
         <button onClick={today}>today</button>
         <button onClick={next}>next</button>
