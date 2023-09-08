@@ -1,0 +1,19 @@
+{
+  "name": "doerpsmobil",
+  "scripts": {
+    "prepare": "chmod +x scripts/prepare.mjs && ./scripts/prepare.mjs",
+    "emulators:start": "firebase emulators:start",
+    "format": "prettier . '!pnpm-lock.yaml' '!apps/**' --write && pnpm --parallel format",
+    "format:check": "prettier . '!pnpm-lock.yaml' '!apps/**' --check && pnpm --parallel format:check",
+    "tsc": "pnpm --parallel tsc",
+    "lint": "pnpm --parallel lint",
+    "dev": "pnpm --parallel dev",
+    "deploy": "scripts/deploy.mjs"
+  },
+  "devDependencies": {
+    "prettier": "3.0.3"
+  },
+  "dependencies": {
+    "date-fns": "2.30.0"
+  }
+}

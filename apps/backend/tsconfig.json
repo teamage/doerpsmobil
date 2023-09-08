@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "esModuleInterop": true,
+    "module": "commonjs",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2022",
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
