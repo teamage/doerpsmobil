@@ -12,6 +12,7 @@
     "types": ["vite/client"],
     "noEmit": true,
     "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": { "#backend": ["../backend/src"], "#/*": ["./src/*"] }
   }
 }

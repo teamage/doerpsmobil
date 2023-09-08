@@ -1,13 +1,10 @@
-export { usePageContext };
-export { PageContextProvider };
-
 import { useContext, createContext, type JSX } from 'solid-js';
 import { type Store } from 'solid-js/store';
-import type { PageContext } from './types';
+import type { PageContext } from '#/pages/app/renderer/types';
 
 const Context = createContext<Store<PageContext>>();
 
-function PageContextProvider(props: {
+export function PageContextProvider(props: {
   pageContext: Store<PageContext>;
   children: JSX.Element;
 }) {
@@ -19,8 +16,7 @@ function PageContextProvider(props: {
   );
 }
 
-/** Access the pageContext from any SolidJS component */
-function usePageContext() {
+export function usePageContext() {
   const pageContext = useContext(Context);
   if (!pageContext)
     throw new Error(

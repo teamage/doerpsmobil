@@ -1,6 +1,7 @@
 {
   "name": "doerpsmobil",
   "scripts": {
+    "frontend:build": "pnpm --filter frontend build",
     "prepare": "chmod +x scripts/prepare.mjs && ./scripts/prepare.mjs",
     "emulators:start": "firebase emulators:start",
     "format": "prettier . '!pnpm-lock.yaml' '!apps/**' --write && pnpm --parallel format",

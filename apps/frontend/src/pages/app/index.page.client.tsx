@@ -1,20 +1,20 @@
-import { createEffect, createResource } from 'solid-js';
+import { createResource } from 'solid-js';
 import { navigate } from 'vite-plugin-ssr/client/router';
-import { usePageContext } from '../renderer/usePageContext';
-import { fetcher } from '../data';
+import { usePageContext } from '#/pages/app/renderer/use-page-context';
+import { fetcher } from '#/data';
 
 function previous() {
   const currentCounter = getWeekFromSearchParams();
-  navigate(`/?counter=${currentCounter - 1}`);
+  navigate(`/app?counter=${currentCounter - 1}`);
 }
 
 function next() {
   const currentCounter = getWeekFromSearchParams();
-  navigate(`/?counter=${currentCounter + 1}`);
+  navigate(`/app?counter=${currentCounter + 1}`);
 }
 
 function today() {
-  navigate(`/?counter=0`);
+  navigate(`/app?counter=0`);
 }
 
 export function Page() {
@@ -26,10 +26,6 @@ export function Page() {
     () => pageContext.urlParsed.search['counter'],
     fetcher,
   );
-
-  createEffect(() => {
-    /* console.log(data.loading); */
-  });
 
   return (
     <div class='grow flex flex-col gap-4 justify-center items-center'>

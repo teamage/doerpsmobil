@@ -1,7 +1,5 @@
 import { escapeInject } from 'vite-plugin-ssr/server';
 
-export const passToClient = ['pageProps', 'documentProps', 'urlParams'];
-
 export async function render() {
   const documentHtml = escapeInject`<!DOCTYPE html>
     <html lang="en">
@@ -14,6 +12,7 @@ export async function render() {
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
         <link rel="icon" href="/logo-icon.svg" type="image/svg+xml"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Doerpsmobil</title>
       </head> 
       <body>
         <div id="root">

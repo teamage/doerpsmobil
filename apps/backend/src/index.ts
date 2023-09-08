@@ -20,11 +20,26 @@ export const valid = z.string();
 
 const appRouter = t.router({
   userById: t.procedure.input(valid).mutation(async (opts) => {
-    console.log(opts.ctx.req.headers['my-header']);
-
     const { input } = opts;
 
-    return input;
+    await new Promise<void>((resolve) =>
+      setTimeout(() => {
+        resolve();
+      }, 1000),
+    );
+
+    console.log('received: ', input);
+
+    return Math.random().toString();
+    /* try {
+      const { input } = opts;
+
+      console.log('received: ', input);
+
+      return 'data';
+    } catch (e) {
+      return 'error';
+    } */
   }),
 });
 

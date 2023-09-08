@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-export const clientRouting = true;
-export { render };
-
 import { render as solidRender } from 'solid-js/web';
-import { PageLayout } from './PageLayout';
-import type { PageContextBuiltInClientWithClientRouting as PageContextBuiltInClient } from 'vite-plugin-ssr/types';
-import type { PageContext } from './types';
-import { createStore, reconcile } from 'solid-js/store';
+import { RootPage } from '#/pages/app/renderer/root-page';
 
-type PageContextClient = PageContextBuiltInClient & PageContext;
+import type { PageContextClient as PageContextClient } from '#/pages/app/renderer/types';
+import { createStore, reconcile } from 'solid-js/store';
 
 let dispose: () => void;
 let rendered = false;
@@ -17,8 +11,10 @@ const [pageContextStore, setPageContext] = createStore<PageContextClient>(
   {} as PageContextClient,
 );
 
-async function render(pageContext: PageContextClient) {
+export async function render(pageContext: PageContextClient) {
   pageContext = removeUnmergableInternals(pageContext);
+
+  document.title = pageContext.exports.title;
 
   if (!rendered) {
     const node = document.getElementById('loadID')!;
@@ -34,7 +30,7 @@ async function render(pageContext: PageContextClient) {
     const container = document.getElementById('root')!;
 
     dispose = solidRender(
-      () => <PageLayout pageContext={pageContextStore} />,
+      () => <RootPage pageContext={pageContextStore} />,
       container,
     );
 
@@ -44,6 +40,11 @@ async function render(pageContext: PageContextClient) {
   }
 }
 
+export const clientRouting = true;
+
+// from vite-plugin-ssr author:
+
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // Avoid reconcile() to throw:
 // ```
 // dev.js:135 Uncaught (in promise) TypeError: Cannot assign to read only property 'Page' of object '[object Module]'
