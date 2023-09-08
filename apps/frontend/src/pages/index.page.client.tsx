@@ -20,19 +20,20 @@ function today() {
 export function Page() {
   const pageContext = usePageContext();
 
+  console.log('render Home');
+
   const [data] = createResource<string, string>(
     () => pageContext.urlParsed.search['counter'],
     fetcher,
   );
 
   createEffect(() => {
-    console.log(data.loading);
-    console.log('helloooooooo');
+    /* console.log(data.loading); */
   });
 
   return (
-    <div class="w-screen h-screen bg-neutral-950 flex flex-col gap-4 justify-center items-center text-neutral-300">
-      <h1 class="text-neutral-300">Home</h1>
+    <div class="grow flex flex-col gap-4 justify-center items-center">
+      <h1>Home</h1>
       <span>data for {pageContext.urlParsed.search['counter']} :</span>
       <span class="w-[200px] h-5">{data.loading ? 'loading' : data()}</span>
       <div class="flex gap-4">

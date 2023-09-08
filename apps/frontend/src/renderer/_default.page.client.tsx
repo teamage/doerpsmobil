@@ -26,7 +26,6 @@ async function render(pageContext: PageContextClient) {
       node.parentNode.removeChild(node);
     }
 
-    console.log('render or hydrate');
     // Dispose to prevent duplicate pages when navigating.
     if (dispose) dispose();
 
