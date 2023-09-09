@@ -28,7 +28,6 @@ export async function fetcher(arg: string) {
     return res;
   } catch (cause) {
     if (isTRPCClientError(cause)) {
-      // `cause` is now typed as your router's `TRPCClientError`
       console.log('isTRPCClientError');
       console.log('cause: ', cause);
     } else {

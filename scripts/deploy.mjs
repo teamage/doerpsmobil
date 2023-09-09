@@ -22,13 +22,19 @@ if (!latestTag.stdout.trim()) {
   const changedPackagesCmd =
     await $`git diff --name-only ${currentHash} ${latestTag} | grep 'apps/' | cut -d '/' -f 2 | sort -u`;
   changedPackages = changedPackagesCmd.stdout.trim().split('\n');
-  if (changedPackages.includes('frontend')) {
-    deployCmd = '--only=hosting';
+
+  if (changedPackages.length === 2) {
     await buildFrontend();
-  }
-  if (changedPackages.includes('backend')) {
-    deployCmd = '--only=functions';
     await buildBackend();
+  } else {
+    if (changedPackages.includes('frontend')) {
+      deployCmd = '--only=hosting';
+      await buildFrontend();
+    }
+    if (changedPackages.includes('backend')) {
+      deployCmd = '--only=functions';
+      await buildBackend();
+    }
   }
 }
 
