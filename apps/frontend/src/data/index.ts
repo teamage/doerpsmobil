@@ -22,9 +22,9 @@ export function isTRPCClientError(
   return cause instanceof TRPCClientError;
 }
 
-export async function fetcher() {
+export async function fetcher(arg: string) {
   try {
-    const res = await trpc.userById.mutate('argument');
+    const res = await trpc.userById.mutate(arg);
     return res;
   } catch (cause) {
     if (isTRPCClientError(cause)) {

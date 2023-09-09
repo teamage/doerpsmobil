@@ -22,15 +22,15 @@ const appRouter = t.router({
   userById: t.procedure.input(valid).mutation(async (opts) => {
     const { input } = opts;
 
-    await new Promise<void>((resolve) =>
+    /*  await new Promise<void>((resolve) =>
       setTimeout(() => {
         resolve();
-      }, 1000),
-    );
+      }, 500),
+    ); */
 
     console.log('received: ', input);
 
-    return Math.random().toString();
+    return input;
     /* try {
       const { input } = opts;
 
