@@ -5,7 +5,7 @@ import { UserConfig } from 'vite';
 
 const config: UserConfig = {
   plugins: [
-    solidPlugin(),
+    solidPlugin({ ssr: true }),
     ssr({
       prerender: true,
     }),

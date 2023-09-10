@@ -1,8 +1,15 @@
-import { PageContextServer } from '#/pages/app/renderer/types';
-import { escapeInject } from 'vite-plugin-ssr/server';
+import { RootPage } from '#/pages/website/renderer/root-page';
+import { PageContextServer } from '#/pages/website/renderer/types';
+import { generateHydrationScript, renderToStream } from 'solid-js/web';
+import {
+  escapeInject,
+  dangerouslySkipEscape,
+  stampPipe,
+} from 'vite-plugin-ssr/server';
 
 export async function render(pageContext: PageContextServer) {
-  console.log(pageContext.exports.title);
+  const { pipe } = renderToStream(() => <RootPage pageContext={pageContext} />);
+  stampPipe(pipe, 'node-stream');
 
   return escapeInject`<!DOCTYPE html>
     <html lang="en">
@@ -16,11 +23,10 @@ export async function render(pageContext: PageContextServer) {
         <link rel="icon" href="/logo-icon.svg" type="image/svg+xml"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>${pageContext.exports.title}</title>
-      </head> 
+        ${dangerouslySkipEscape(generateHydrationScript())}
+      </head>
       <body>
-        <div id="root">
-          <span id="loadID">loading ...</span>
-        </div>
+      <div id="root">${pipe}</div>
       </body>
     </html>`;
 }
