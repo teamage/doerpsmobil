@@ -1,6 +1,5 @@
 import { Sidebar } from '#/components/app-sidebar';
 import { Toolbar } from '#/components/app-toolbar';
-import { Logo } from '#/components/logo';
 import { usePageContext } from '#/pages/app/renderer/use-page-context';
 import { Show } from 'solid-js';
 
@@ -14,7 +13,10 @@ export function AppHeader() {
         <a class='sm:hidden block' rel='external' href='/'>
           <img width={20} height={'auto'} src='/logo-icon.svg' />
         </a>
-        <Logo class='h-14 w-auto hidden sm:block' />
+
+        <a class='w-[160px] hidden sm:block' rel='external' href='/'>
+          <img src={'/logo.png'} alt='logo' />
+        </a>
       </div>
 
       <Show

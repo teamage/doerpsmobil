@@ -17,11 +17,6 @@ export async function render(pageContext: PageContextClient) {
   document.title = pageContext.exports.title;
 
   if (!rendered) {
-    const node = document.getElementById('loadID')!;
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-
     // Dispose to prevent duplicate pages when navigating.
     if (dispose) dispose();
 

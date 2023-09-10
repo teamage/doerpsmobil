@@ -2,8 +2,6 @@ import { PageContextServer } from '#/pages/app/renderer/types';
 import { escapeInject } from 'vite-plugin-ssr/server';
 
 export async function render(pageContext: PageContextServer) {
-  console.log(pageContext.exports.title);
-
   return escapeInject`<!DOCTYPE html>
     <html lang="en">
       <head>
@@ -18,9 +16,7 @@ export async function render(pageContext: PageContextServer) {
         <title>${pageContext.exports.title}</title>
       </head> 
       <body>
-        <div id="root">
-          <span id="loadID">loading ...</span>
-        </div>
+        <div id="root"></div>
       </body>
     </html>`;
 }
