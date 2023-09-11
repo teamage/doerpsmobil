@@ -1,4 +1,4 @@
-import { render as solidRender } from 'solid-js/web';
+import { hydrate, render as solidRender } from 'solid-js/web';
 import { RootPage } from '#/pages/app/renderer/root-page';
 
 import type { PageContextClient as PageContextClient } from '#/pages/app/renderer/types';
@@ -24,10 +24,21 @@ export async function render(pageContext: PageContextClient) {
 
     const container = document.getElementById('root')!;
 
-    dispose = solidRender(
-      () => <RootPage pageContext={pageContextStore} />,
-      container,
-    );
+    if (pageContext.isHydration) {
+      console.log('is hydration');
+
+      dispose = hydrate(
+        () => <RootPage pageContext={pageContextStore} />,
+        container,
+      );
+    } else {
+      console.log('is not hydration');
+
+      dispose = solidRender(
+        () => <RootPage pageContext={pageContextStore} />,
+        container,
+      );
+    }
 
     rendered = true;
   } else {

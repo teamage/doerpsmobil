@@ -1,11 +1,14 @@
 import { Burger } from '#/components/icons';
 import { Logo } from '#/components/logo';
 import { useCounter } from '#/context/use-counter';
+import { useUser } from '#/context/use-user';
 import { usePageContext } from '#/pages/app/renderer/use-page-context';
 import { As, Dialog } from '@kobalte/core';
+import { Show } from 'solid-js';
 
 export function Sidebar() {
   const counter = useCounter()[0];
+  const user = useUser();
 
   return (
     <Dialog.Root>
@@ -33,20 +36,24 @@ export function Sidebar() {
                 </MyLink>
                 <MyLink href='/app/account/meine-daten'>Meine Daten</MyLink>
               </div>
-              <div class='flex flex-col'>
-                <span class='pl-6 mb-1 text-neutral-500'>Admin</span>
-                <MyLink href='/app/admin/buchungsverwaltung'>
-                  Buchungsverwaltung
-                </MyLink>
-                <MyLink href='/app/admin/nutzerverwaltung'>
-                  Nutzerverwaltung
-                </MyLink>
-                <MyLink href='/app/admin/statistiken'>Statistiken</MyLink>
-              </div>
+              <Show when={user.isAdmin}>
+                <div class='flex flex-col'>
+                  <span class='pl-6 mb-1 text-neutral-500'>Admin</span>
+                  <MyLink href='/app/admin/buchungsverwaltung'>
+                    Buchungsverwaltung
+                  </MyLink>
+                  <MyLink href='/app/admin/nutzerverwaltung'>
+                    Nutzerverwaltung
+                  </MyLink>
+                  <MyLink href='/app/admin/statistiken'>Statistiken</MyLink>
+                </div>
+              </Show>
             </div>
             <div class='flex flex-col items-center'>
-              <span>Karen Hansen</span>
-              <span>Admin</span>
+              <span>{user.fullName}</span>
+              <Show when={user.isAdmin}>
+                <span>Admin</span>
+              </Show>
             </div>
           </div>
         </Dialog.Content>

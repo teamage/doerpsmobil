@@ -3,3 +3,4 @@ export function Page() {
 }
 
 export const title = 'Nutzerverwaltung';
+export const admin = true;

@@ -3,3 +3,4 @@ export function Page() {
 }
 
 export const title = 'Statistiken';
+export const admin = true;

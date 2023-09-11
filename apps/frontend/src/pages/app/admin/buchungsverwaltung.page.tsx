@@ -3,3 +3,4 @@ export function Page() {
 }
 
 export const title = 'Buchungsverwaltung';
+export const admin = true;

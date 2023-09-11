@@ -5,6 +5,7 @@ import express from 'express';
 import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
 import { z } from 'zod';
+import { getAuth } from './firebase';
 const createContext = ({
   req,
   res,
@@ -22,9 +23,14 @@ const appRouter = t.router({
   userById: t.procedure.input(valid).mutation(async (opts) => {
     const { input } = opts;
 
-    console.log('received: ', input);
-
-    return input;
+    return await getAuth()
+      .verifyIdToken(input)
+      .then(() => {
+        return 'fine';
+      })
+      .catch(() => {
+        return 'not fine';
+      });
   }),
 });
 

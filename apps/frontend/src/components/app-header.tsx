@@ -1,10 +1,17 @@
 import { Sidebar } from '#/components/app-sidebar';
 import { Toolbar } from '#/components/app-toolbar';
+import { auth } from '#/firebase';
 import { usePageContext } from '#/pages/app/renderer/use-page-context';
 import { Show } from 'solid-js';
 
+import { signOut as fbSignOut } from 'firebase/auth';
+
 export function AppHeader() {
   const pageContext = usePageContext();
+
+  const signOut = () => {
+    fbSignOut(auth);
+  };
 
   return (
     <div class='basis-[100px] shrink-0 flex px-4 border-b gap-4 items-center'>
@@ -26,7 +33,7 @@ export function AppHeader() {
         <Toolbar />
       </Show>
 
-      <div>ende</div>
+      <button onClick={signOut}>signout</button>
     </div>
   );
 }

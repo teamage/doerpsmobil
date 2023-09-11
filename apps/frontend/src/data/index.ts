@@ -4,6 +4,7 @@ import {
   TRPCClientError,
 } from '@trpc/client';
 import type { AppRouter } from '#backend';
+import { auth } from '#/firebase';
 
 const trpc = createTRPCProxyClient<AppRouter>({
   links: [
@@ -23,9 +24,12 @@ export function isTRPCClientError(
 }
 
 export async function fetcher(arg: string) {
+  const token = await auth.currentUser!.getIdToken();
+  console.log(arg);
+
   try {
-    const res = await trpc.userById.mutate(arg);
-    return res;
+    const res = await trpc.userById.mutate(token);
+    return res as string;
   } catch (cause) {
     if (isTRPCClientError(cause)) {
       console.log('isTRPCClientError');

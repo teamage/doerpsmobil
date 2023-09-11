@@ -3,7 +3,7 @@
   "scripts": {
     "frontend:build": "pnpm --filter frontend build",
     "prepare": "chmod +x scripts/prepare.mjs && ./scripts/prepare.mjs",
-    "emulators:start": "firebase emulators:start",
+    "emulators:start": "firebase emulators:exec scripts/emulator-startup.mjs --ui",
     "format": "prettier . '!pnpm-lock.yaml' '!apps/**' --write && pnpm --parallel format",
     "format:check": "prettier . '!pnpm-lock.yaml' '!apps/**' --check && pnpm --parallel format:check",
     "tsc": "pnpm --parallel tsc",
@@ -15,6 +15,7 @@
     "prettier": "3.0.3"
   },
   "dependencies": {
-    "date-fns": "2.30.0"
+    "date-fns": "2.30.0",
+    "firebase-admin": "11.10.1"
   }
 }

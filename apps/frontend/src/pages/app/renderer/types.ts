@@ -13,6 +13,7 @@ type PageContextCustom = {
   exports: {
     title: string;
     description?: string;
+    admin?: boolean;
   };
 };
 
@@ -22,3 +23,9 @@ export type PageContextClient = PageContextBuiltInClient<Page> &
   PageContextCustom;
 
 export type PageContext = PageContextClient | PageContextServer;
+
+export type User = {
+  isAdmin?: boolean;
+  email: string;
+  fullName: string;
+};

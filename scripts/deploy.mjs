@@ -52,7 +52,7 @@ async function buildBackend() {
 
 async function buildFrontend() {
   await $`pnpm --filter frontend i --frozen-lockfile`;
-  await $`pnpm --filter frontend build`;
+  await $`pnpm --filter frontend build:prod`;
 }
 
 async function deployAllowed() {
