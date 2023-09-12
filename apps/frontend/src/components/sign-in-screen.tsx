@@ -2,7 +2,7 @@ import { auth } from '#/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { TextField } from '@kobalte/core';
 import { createSignal } from 'solid-js';
-import { AuthError, AuthErrorCodes } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 
 export function SignInScreen() {
   const [email, setEmail] = createSignal('');
@@ -15,21 +15,31 @@ export function SignInScreen() {
 
     try {
       await signInWithEmailAndPassword(auth, email(), password());
-    } catch (e) {
-      const error = e as AuthError;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            setEmailError('Email nicht registriert');
+            break;
+          case 'auth/invalid-email':
+            setEmailError('Dies ist keine Emailadresse');
+            break;
+          case 'auth/wrong-password':
+            setEmailError('Falsches Passwort');
+            break;
 
-      switch (error.code) {
-        case AuthErrorCodes.INVALID_EMAIL:
-          setEmailError('Dies ist keine Emailadresse');
-          break;
-        case AuthErrorCodes.INVALID_PASSWORD:
-          setPasswordError('Falsches Passwort');
-          break;
-        default:
-          setEmailError(error.code);
-          setPasswordError(error.code);
-          console.log(error.code);
+          default:
+            console.log('firebase default error');
+            console.log('code:', error.code);
+            console.log('mssg:', error.message);
+
+            setEmailError(error.code);
+            setPasswordError(error.code);
+        }
+        return;
       }
+
+      console.log('unknown error:', error);
     }
   };
 
