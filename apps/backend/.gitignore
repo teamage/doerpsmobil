@@ -2,3 +2,4 @@
 .DS_Store
 /tsconfig.tsbuildinfo
 /node_modules
+/tsc-out

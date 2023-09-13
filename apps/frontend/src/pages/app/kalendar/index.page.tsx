@@ -1,7 +1,7 @@
-import { createEffect, createResource } from 'solid-js';
+import { For, Show, createEffect, createResource } from 'solid-js';
 
 import { usePageContext } from '#/pages/app/renderer/use-page-context';
-import { fetcher } from '#/data';
+import { addBooking, getBookings } from '#/data';
 import { useCounter } from '#/context/use-counter';
 
 export function Page() {
@@ -16,7 +16,7 @@ export function Page() {
     return '0';
   };
 
-  const [data] = createResource<string, string>(urlCounter, fetcher);
+  const [data] = createResource(urlCounter, getBookings);
 
   createEffect(() => {
     console.log('effect');
@@ -29,9 +29,11 @@ export function Page() {
   return (
     <div class='grow flex flex-col gap-4 justify-center items-center'>
       <span>data for {urlCounter()} :</span>
-      <span class='w-[200px] h-5'>
-        {data.loading ? 'loading' : data()?.toString()}
-      </span>
+      <button onClick={addBooking}>add booking</button>
+
+      <Show when={!data.loading} fallback={'...loading'}>
+        <For each={data()}>{(booking) => <li>{booking.createdAt}</li>}</For>
+      </Show>
     </div>
   );
 }

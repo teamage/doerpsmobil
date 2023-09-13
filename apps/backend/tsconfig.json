@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "incremental": true,
+    "composite": true,
     "esModuleInterop": true,
     "module": "commonjs",
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
-    "noEmit": true,
+    "outDir": "tsc-out",
     "paths": {
       "@/*": ["./src/*"]
     }

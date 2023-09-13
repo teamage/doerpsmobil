@@ -10,7 +10,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'prettier',
   ],
-  ignorePatterns: ['dist'],
+  ignorePatterns: ['dist', 'tsc-out'],
   rules: {
     'no-unused-vars': 0,
     '@typescript-eslint/no-unused-vars': 1,

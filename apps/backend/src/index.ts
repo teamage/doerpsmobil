@@ -1,44 +1,14 @@
 import * as functionsv2 from 'firebase-functions/v2';
-
 import express from 'express';
+import { createExpressMiddleware } from '@trpc/server/adapters/express';
 
-import { inferAsyncReturnType, initTRPC } from '@trpc/server';
-import * as trpcExpress from '@trpc/server/adapters/express';
-import { z } from 'zod';
-import { getAuth } from './firebase';
-const createContext = ({
-  req,
-  res,
-}: trpcExpress.CreateExpressContextOptions) => ({
-  req,
-  res,
-});
-type Context = inferAsyncReturnType<typeof createContext>;
-
-const t = initTRPC.context<Context>().create();
-
-export const valid = z.string();
-
-const appRouter = t.router({
-  userById: t.procedure.input(valid).mutation(async (opts) => {
-    const { input } = opts;
-
-    return await getAuth()
-      .verifyIdToken(input)
-      .then(() => {
-        return 'fine';
-      })
-      .catch(() => {
-        return 'not fine';
-      });
-  }),
-});
+import { createContext } from '@/context';
+import { appRouter } from '@/router';
 
 const app = express();
-
 app.use(
   '/api',
-  trpcExpress.createExpressMiddleware({
+  createExpressMiddleware({
     router: appRouter,
     createContext,
   }),

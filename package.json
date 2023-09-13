@@ -6,7 +6,7 @@
     "emulators:start": "firebase emulators:exec scripts/emulator-startup.mjs --ui",
     "format": "prettier . '!pnpm-lock.yaml' '!apps/**' --write && pnpm --parallel format",
     "format:check": "prettier . '!pnpm-lock.yaml' '!apps/**' --check && pnpm --parallel format:check",
-    "tsc": "pnpm --parallel tsc",
+    "tsc": "pnpm --filter backend tsc && pnpm --filter frontend tsc",
     "lint": "pnpm --parallel lint",
     "dev": "pnpm --parallel dev",
     "deploy": "scripts/deploy.mjs"

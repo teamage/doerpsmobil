@@ -4,6 +4,5 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 initializeApp();
 
-const db = getFirestore();
-
-export { db, getAuth };
+export const db = getFirestore();
+export const auth = getAuth();
