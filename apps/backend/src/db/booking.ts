@@ -20,3 +20,6 @@ const bookingConverter = {
 export const bookings = db
   .collection('bookings')
   .withConverter(bookingConverter);
+
+export const bookingsCol = (myDb: FirebaseFirestore.Firestore) =>
+  myDb.collection('bookings').withConverter(bookingConverter);

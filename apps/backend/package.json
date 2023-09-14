@@ -10,7 +10,8 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "fill-data": "FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 ts-node -r tsconfig-paths/register scripts/fill-data.ts"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "3.3.0",
@@ -30,6 +31,7 @@
     "eslint": "8.48.0",
     "eslint-config-prettier": "9.0.0",
     "prettier": "3.0.3",
+    "tsconfig-paths": "4.2.0",
     "typescript": "5.2.2"
   }
 }
