@@ -5,7 +5,7 @@ export type Booking = {
   from: string;
   to: string;
   isAdminBooking: boolean;
-  createdAt: string;
+  createdAt: Date;
 };
 
 const bookingConverter = {

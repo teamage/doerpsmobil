@@ -7,8 +7,6 @@ import { PageContextProvider } from '#/pages/app/renderer/use-page-context';
 import '#/styles/globals.css';
 
 export function RootPage(props: { pageContext: Store<PageContext> }) {
-  console.log('render RootPage');
-
   return (
     <PageContextProvider pageContext={props.pageContext}>
       <div class='w-screen h-screen flex flex-col'>

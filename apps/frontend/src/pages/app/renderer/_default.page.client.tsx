@@ -25,15 +25,11 @@ export async function render(pageContext: PageContextClient) {
     const container = document.getElementById('root')!;
 
     if (pageContext.isHydration) {
-      console.log('is hydration');
-
       dispose = hydrate(
         () => <RootPage pageContext={pageContextStore} />,
         container,
       );
     } else {
-      console.log('is not hydration');
-
       dispose = solidRender(
         () => <RootPage pageContext={pageContextStore} />,
         container,

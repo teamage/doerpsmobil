@@ -17,7 +17,7 @@ const bookings = bookingsCol(db);
     from: 'fromdd',
     to: 'toddd',
     uid: 'some-uid',
-    createdAt: new Date().toString(),
+    createdAt: new Date(),
     isAdminBooking: true,
   });
 

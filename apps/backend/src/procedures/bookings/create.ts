@@ -19,7 +19,7 @@ export const create = procedure
         from: input.from,
         to: input.to,
         isAdminBooking: input.isAdminBooking,
-        createdAt: new Date().toString(),
+        createdAt: new Date(),
       });
       return 'ok';
     } catch (e) {

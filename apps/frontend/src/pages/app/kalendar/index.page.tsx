@@ -1,38 +1,45 @@
-import { For, Show, createEffect, createResource } from 'solid-js';
+import { For, Show, createResource, createSignal, onCleanup } from 'solid-js';
 
-import { usePageContext } from '#/pages/app/renderer/use-page-context';
-import { addBooking, getBookings } from '#/data';
-import { useCounter } from '#/context/use-counter';
+import { format } from 'date-fns';
+import de from 'date-fns/locale/de';
+
+import { getBookings } from '#/data';
+import { toBerlinDate } from '#/util';
+import { useAppContext } from '#/context/use-active-date';
 
 export function Page() {
-  const pageContext = usePageContext();
-  const setCounter = useCounter()[1];
+  const appContext = useAppContext();
 
-  const urlCounter = () => {
-    const v = pageContext.urlParsed.search['counter'];
+  const [currentTime, setCurrentTime] = createSignal(toBerlinDate(new Date()));
 
-    if (v) return v;
-    window.history.replaceState({}, '', '/app/kalendar?counter=0');
-    return '0';
-  };
+  const timer = setInterval(() => {
+    setCurrentTime(toBerlinDate(new Date()));
+  }, 1000);
 
-  const [data] = createResource(urlCounter, getBookings);
+  onCleanup(() => clearInterval(timer));
 
-  createEffect(() => {
-    console.log('effect');
-
-    setCounter(parseInt(urlCounter()));
-  });
-
-  console.log('render Home');
+  const [data] = createResource(() => appContext().date, getBookings);
 
   return (
     <div class='grow flex flex-col gap-4 justify-center items-center'>
-      <span>data for {urlCounter()} :</span>
-      <button onClick={addBooking}>add booking</button>
+      <span>view: {appContext().view}</span>
+      <span>
+        date:{' '}
+        {format(appContext().date, 'EEEEEE. dd-MM-y HH:mm', {
+          locale: de,
+        })}
+      </span>
+      <span>
+        Berlin Zeit:{' '}
+        {format(currentTime(), 'EEEEEE. dd-MM-y HH:mm:ss', {
+          locale: de,
+        })}
+      </span>
 
       <Show when={!data.loading} fallback={'...loading'}>
-        <For each={data()}>{(booking) => <li>{booking.createdAt}</li>}</For>
+        <For each={data()}>
+          {(booking) => <li>{new Date(booking.createdAt).toLocaleString()}</li>}
+        </For>
       </Show>
     </div>
   );

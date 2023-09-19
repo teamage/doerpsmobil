@@ -36,14 +36,13 @@ export async function addBooking() {
   });
 }
 
-export async function getBookings(date: string) {
-  console.log(date);
+export async function getBookings(startOfWeek: Date) {
+  console.log(startOfWeek);
 
   try {
     const res = await trpc.bookings.list.query({
       week: 'some-week',
     });
-    console.log(res);
 
     return res;
   } catch (cause) {

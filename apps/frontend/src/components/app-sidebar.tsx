@@ -1,13 +1,14 @@
 import { Burger } from '#/components/icons';
 import { Logo } from '#/components/logo';
-import { useCounter } from '#/context/use-counter';
 import { useUser } from '#/context/use-user';
 import { usePageContext } from '#/pages/app/renderer/use-page-context';
 import { As, Dialog } from '@kobalte/core';
 import { Show } from 'solid-js';
+import { format } from 'date-fns';
+import { useAppContext } from '#/context/use-active-date';
 
 export function Sidebar() {
-  const counter = useCounter()[0];
+  const appContext = useAppContext();
   const user = useUser();
 
   return (
@@ -26,7 +27,12 @@ export function Sidebar() {
           <Logo class='w-auto h-16 pl-6' />
           <div class='grow overflow-auto flex flex-col px-1'>
             <div class='flex flex-col grow gap-4'>
-              <MyLink href={`/app/kalendar?counter=${counter()}`}>
+              <MyLink
+                href={`/app/kalendar?woche=${format(
+                  appContext().date,
+                  'dd-MM-y',
+                )}`}
+              >
                 Kalendar
               </MyLink>
               <div class='flex flex-col'>

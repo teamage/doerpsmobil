@@ -10,8 +10,6 @@ const firebaseConfig = {
   appId: '1:8023518644:web:fd1c617e6d3ab8cf9796e1',
 };
 
-console.log('run firebase.ts');
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
