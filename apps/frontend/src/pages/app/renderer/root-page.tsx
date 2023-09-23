@@ -13,7 +13,7 @@ import { SignInScreen } from '#/components/sign-in-screen';
 import { UnauthorizedScreen } from '#/components/unauthorized-screen';
 
 import '#/styles/globals.css';
-import { AppContextProvider } from '#/context/use-active-date';
+import { AppContextProvider } from '#/context/use-app-context';
 
 // make sure admin is exported from every page
 // maybe type user role

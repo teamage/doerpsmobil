@@ -1,36 +1,54 @@
 import { ArrowLeft, ArrowRight, Calendar, CaretDown } from '#/components/icons';
-import { useAppContext } from '#/context/use-active-date';
+import { useAppContext } from '#/context/use-app-context';
 
-import { toBerlinDate } from '#/util';
-import { format } from 'date-fns';
+import { format, toBerlinDate, urlQueryFormat } from '#/util';
+import { endOfWeek, getMonth, getYear, startOfWeek } from 'date-fns';
 import { addDays } from 'date-fns';
-import { de } from 'date-fns/locale';
+
 import { navigate } from 'vite-plugin-ssr/client/router';
 
 export function Toolbar() {
   const appContext = useAppContext();
+  const dayStep = appContext().view === 'Day' ? 1 : 7;
 
   const previous = () => {
-    const n = appContext().view === 'Day' ? 1 : 7;
     navigate(
-      `/app/kalendar?woche=${format(
-        addDays(appContext().date, -n),
-        'dd-MM-y',
+      `/app/kalendar?datum=${format(
+        addDays(appContext().date, -dayStep),
+        urlQueryFormat,
       )}`,
     );
   };
 
   const next = () => {
-    const n = appContext().view === 'Day' ? 1 : 7;
     navigate(
-      `/app/kalendar?woche=${format(addDays(appContext().date, n), 'dd-MM-y')}`,
+      `/app/kalendar?datum=${format(
+        addDays(appContext().date, dayStep),
+        urlQueryFormat,
+      )}`,
     );
   };
 
   const today = () => {
     navigate(
-      `/app/kalendar?woche=${format(toBerlinDate(new Date()), 'dd-MM-y')}`,
+      `/app/kalendar?datum=${format(toBerlinDate(new Date()), urlQueryFormat)}`,
     );
+  };
+
+  const monthText = () => {
+    if (appContext().view === 'Week') {
+      const start = startOfWeek(appContext().date, { weekStartsOn: 1 });
+      const end = endOfWeek(appContext().date, { weekStartsOn: 1 });
+
+      if (getMonth(start) === getMonth(end)) return format(start, 'MMMM y');
+
+      if (getYear(start) === getYear(end))
+        return format(start, 'MMMM') + ' - ' + format(end, 'MMMM y');
+
+      return format(start, 'MMMM y') + ' - ' + format(end, 'MMMM y');
+    } else {
+      return format(appContext().date, 'MMMM y');
+    }
   };
 
   return (
@@ -59,7 +77,7 @@ export function Toolbar() {
         </button>
       </div>
       <button class='flex gap-1 items-center'>
-        {format(appContext().date, 'MMMM', { locale: de })}
+        {monthText()}
         <CaretDown class='w-5 h-5' />
       </button>
     </div>

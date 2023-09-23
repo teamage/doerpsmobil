@@ -36,15 +36,20 @@ export async function addBooking() {
   });
 }
 
-export async function getBookings(startOfWeek: Date) {
-  console.log(startOfWeek);
-
+export async function getBookings(dates: Date[]) {
   try {
-    const res = await trpc.bookings.list.query({
-      week: 'some-week',
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
     });
 
-    return res;
+    return dates.map((_, i) =>
+      Array.from({ length: 24 }, (_, j) => {
+        if (i === 0 && j >= 5) return true;
+        return false;
+      }),
+    );
   } catch (cause) {
     if (isTRPCClientError(cause)) {
       console.log('isTRPCClientError');

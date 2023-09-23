@@ -5,7 +5,8 @@ import { usePageContext } from '#/pages/app/renderer/use-page-context';
 import { As, Dialog } from '@kobalte/core';
 import { Show } from 'solid-js';
 import { format } from 'date-fns';
-import { useAppContext } from '#/context/use-active-date';
+import { useAppContext } from '#/context/use-app-context';
+import { urlQueryFormat } from '#/util';
 
 export function Sidebar() {
   const appContext = useAppContext();
@@ -28,9 +29,9 @@ export function Sidebar() {
           <div class='grow overflow-auto flex flex-col px-1'>
             <div class='flex flex-col grow gap-4'>
               <MyLink
-                href={`/app/kalendar?woche=${format(
+                href={`/app/kalendar?datum=${format(
                   appContext().date,
-                  'dd-MM-y',
+                  urlQueryFormat,
                 )}`}
               >
                 Kalendar

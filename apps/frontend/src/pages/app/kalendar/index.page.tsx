@@ -1,47 +1,128 @@
-import { For, Show, createResource, createSignal, onCleanup } from 'solid-js';
+import {
+  For,
+  createEffect,
+  createResource,
+  createSignal,
+  onCleanup,
+} from 'solid-js';
 
-import { format } from 'date-fns';
-import de from 'date-fns/locale/de';
+import {
+  addDays,
+  addHours,
+  eachHourOfInterval,
+  endOfDay,
+  startOfDay,
+  startOfWeek,
+} from 'date-fns';
 
 import { getBookings } from '#/data';
 import { toBerlinDate } from '#/util';
-import { useAppContext } from '#/context/use-active-date';
+import { useAppContext } from '#/context/use-app-context';
+import { Slot } from '#/pages/app/kalendar/slot';
+import { DayHeader } from '#/pages/app/kalendar/day-header';
+import { TimeSlot } from '#/pages/app/kalendar/time-slot';
 
 export function Page() {
   const appContext = useAppContext();
+
+  const colLength = appContext().view === 'Week' ? 7 : 1;
+  const startDate =
+    appContext().view === 'Week'
+      ? startOfWeek(appContext().date, { weekStartsOn: 1 })
+      : appContext().date;
+
+  const cols = Array.from({ length: colLength }, (_, i) =>
+    Array.from({ length: 24 }, (_, j) => ({
+      date: createSignal(addHours(addDays(startDate, i), j)),
+      booking: createSignal(false),
+    })),
+  );
+
+  const days = Array.from({ length: colLength }, (_, i) =>
+    createSignal(addDays(startDate, i)),
+  );
+
+  const timeSlots = eachHourOfInterval({
+    start: addHours(startOfDay(appContext().date), 1),
+    end: endOfDay(appContext().date),
+  });
 
   const [currentTime, setCurrentTime] = createSignal(toBerlinDate(new Date()));
 
   const timer = setInterval(() => {
     setCurrentTime(toBerlinDate(new Date()));
-  }, 1000);
+  }, 3000);
 
   onCleanup(() => clearInterval(timer));
 
-  const [data] = createResource(() => appContext().date, getBookings);
+  const [data] = createResource(() => {
+    const start =
+      appContext().view === 'Week'
+        ? startOfWeek(appContext().date, { weekStartsOn: 1 })
+        : appContext().date;
+
+    return Array.from({ length: colLength }, (_, i) => addDays(start, i));
+  }, getBookings);
+
+  createEffect(() => {
+    if (data.loading) {
+      cols.forEach((e) =>
+        e.forEach(({ booking: [_, setBooking] }) => setBooking(false)),
+      );
+    } else {
+      cols.forEach((e, i) =>
+        e.forEach(({ booking: [_, setBooking] }, j) =>
+          setBooking(data()![i][j]),
+        ),
+      );
+    }
+  });
+
+  createEffect(() => {
+    const start =
+      appContext().view === 'Week'
+        ? startOfWeek(appContext().date, { weekStartsOn: 1 })
+        : appContext().date;
+
+    days.forEach(([_, setDay], i) => setDay(addDays(start, i)));
+
+    cols.forEach((e, i) =>
+      e.forEach(({ date: [_, setDate] }, j) =>
+        setDate(addHours(addDays(start, i), j)),
+      ),
+    );
+  });
 
   return (
-    <div class='grow flex flex-col gap-4 justify-center items-center'>
-      <span>view: {appContext().view}</span>
-      <span>
-        date:{' '}
-        {format(appContext().date, 'EEEEEE. dd-MM-y HH:mm', {
-          locale: de,
-        })}
-      </span>
-      <span>
-        Berlin Zeit:{' '}
-        {format(currentTime(), 'EEEEEE. dd-MM-y HH:mm:ss', {
-          locale: de,
-        })}
-      </span>
-
-      <Show when={!data.loading} fallback={'...loading'}>
-        <For each={data()}>
-          {(booking) => <li>{new Date(booking.createdAt).toLocaleString()}</li>}
+    <>
+      <div class='basis-[100px] shrink-0 flex overflow-y-scroll'>
+        <div class='basis-[80px] shrink-0 border-b'></div>
+        <For each={days}>
+          {([day]) => <DayHeader day={day()} currentTime={currentTime()} />}
         </For>
-      </Show>
-    </div>
+      </div>
+
+      <div class='grow flex overflow-auto'>
+        <div class='flex flex-col basis-[80px] shrink-0'>
+          <For each={timeSlots}>{(slot) => <TimeSlot time={slot} />}</For>
+        </div>
+        <For each={cols}>
+          {(col) => (
+            <div class='flex flex-col grow'>
+              <For each={col}>
+                {({ date: [date], booking: [booking] }) => (
+                  <Slot
+                    bool={booking()}
+                    date={date()}
+                    currentTime={currentTime()}
+                  />
+                )}
+              </For>
+            </div>
+          )}
+        </For>
+      </div>
+    </>
   );
 }
 

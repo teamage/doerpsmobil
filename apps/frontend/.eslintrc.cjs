@@ -12,7 +12,7 @@ module.exports = {
   ],
   ignorePatterns: ['dist'],
   rules: {
+    '@typescript-eslint/no-unused-vars': [1, { argsIgnorePattern: '^_' }],
     'no-unused-vars': 0,
-    '@typescript-eslint/no-unused-vars': 1,
   },
 };

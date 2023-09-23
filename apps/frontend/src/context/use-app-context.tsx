@@ -31,18 +31,13 @@ export function AppContextProvider(props: {
       }));
   });
 
-  function reportWindowSize() {
-    setAppState((prev) => ({
-      ...prev,
-      view: getView(),
-    }));
-  }
-
-  window.onresize = reportWindowSize;
-
   return (
     <AppContext.Provider value={appState}>{props.children}</AppContext.Provider>
   );
+}
+
+export function useAppContext() {
+  return useContext(AppContext)!;
 }
 
 function getView(): View {
@@ -53,7 +48,7 @@ function getView(): View {
 function parseUrlDate(pageContext: PageContext) {
   let startOfWeekDateVar;
   try {
-    const startOfWeekDateQueryParam = pageContext.urlParsed.search['woche'];
+    const startOfWeekDateQueryParam = pageContext.urlParsed.search['datum'];
 
     const [day, month, year] = startOfWeekDateQueryParam.split('-');
 
@@ -70,11 +65,7 @@ function parseUrlDate(pageContext: PageContext) {
     window.history.replaceState(
       {},
       '',
-      `/app/kalendar?woche=${format(weekStart, 'dd-MM-y')}`,
+      `/app/kalendar?datum=${format(weekStart, 'dd-MM-y')}`,
     );
   return weekStart;
-}
-
-export function useAppContext() {
-  return useContext(AppContext)!;
 }
