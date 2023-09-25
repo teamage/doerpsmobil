@@ -1,8 +1,8 @@
-import { ArrowLeft, ArrowRight, Calendar, CaretDown } from '#/components/icons';
+import { DayPicker } from '#/components/day-picker';
+import { ArrowLeft, ArrowRight, Calendar } from '#/components/icons';
 import { useAppContext } from '#/context/use-app-context';
 
 import { format, toBerlinDate, urlQueryFormat } from '#/util';
-import { endOfWeek, getMonth, getYear, startOfWeek } from 'date-fns';
 import { addDays } from 'date-fns';
 
 import { navigate } from 'vite-plugin-ssr/client/router';
@@ -35,22 +35,6 @@ export function Toolbar() {
     );
   };
 
-  const monthText = () => {
-    if (appContext().view === 'Week') {
-      const start = startOfWeek(appContext().date, { weekStartsOn: 1 });
-      const end = endOfWeek(appContext().date, { weekStartsOn: 1 });
-
-      if (getMonth(start) === getMonth(end)) return format(start, 'MMMM y');
-
-      if (getYear(start) === getYear(end))
-        return format(start, 'MMMM') + ' - ' + format(end, 'MMMM y');
-
-      return format(start, 'MMMM y') + ' - ' + format(end, 'MMMM y');
-    } else {
-      return format(appContext().date, 'MMMM y');
-    }
-  };
-
   return (
     <div class='grow flex gap-6'>
       <button class='hidden sm:block' onClick={today}>
@@ -76,10 +60,7 @@ export function Toolbar() {
           <ArrowRight class='w-5 h-5' />
         </button>
       </div>
-      <button class='flex gap-1 items-center'>
-        {monthText()}
-        <CaretDown class='w-5 h-5' />
-      </button>
+      <DayPicker />
     </div>
   );
 }
