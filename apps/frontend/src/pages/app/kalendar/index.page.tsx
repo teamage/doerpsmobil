@@ -1,26 +1,20 @@
 import {
   For,
+  Index,
+  Show,
   createEffect,
   createResource,
   createSignal,
   onCleanup,
 } from 'solid-js';
 
-import {
-  addDays,
-  addHours,
-  eachHourOfInterval,
-  endOfDay,
-  startOfDay,
-  startOfWeek,
-} from 'date-fns';
+import { addDays, addHours, getMinutes, startOfWeek } from 'date-fns';
 
 import { getBookings } from '#/data';
-import { toBerlinDate } from '#/util';
+import { format, toBerlinDate } from '#/util';
 import { useAppContext } from '#/context/use-app-context';
-import { Slot } from '#/pages/app/kalendar/slot';
 import { DayHeader } from '#/pages/app/kalendar/day-header';
-import { TimeSlot } from '#/pages/app/kalendar/time-slot';
+import { TimeSlot } from '#/pages/app/kalendar/timeslot';
 
 export function Page() {
   const appContext = useAppContext();
@@ -32,26 +26,22 @@ export function Page() {
       : appContext().date;
 
   const cols = Array.from({ length: colLength }, (_, i) =>
-    Array.from({ length: 24 }, (_, j) => ({
-      date: createSignal(addHours(addDays(startDate, i), j)),
-      booking: createSignal(false),
-    })),
+    Array.from({ length: 24 }, (_, j) =>
+      createSignal(addHours(addDays(startDate, i), j)),
+    ),
   );
 
   const days = Array.from({ length: colLength }, (_, i) =>
     createSignal(addDays(startDate, i)),
   );
 
-  const timeSlots = eachHourOfInterval({
-    start: addHours(startOfDay(appContext().date), 1),
-    end: endOfDay(appContext().date),
-  });
-
   const [currentTime, setCurrentTime] = createSignal(toBerlinDate(new Date()));
 
   const timer = setInterval(() => {
     setCurrentTime(toBerlinDate(new Date()));
-  }, 3000);
+  }, 30000);
+
+  const [currentPos, setCurrentPos] = createSignal({ row: -1, col: -1 });
 
   onCleanup(() => clearInterval(timer));
 
@@ -65,65 +55,116 @@ export function Page() {
   }, getBookings);
 
   createEffect(() => {
-    if (data.loading) {
-      cols.forEach((e) =>
-        e.forEach(({ booking: [_, setBooking] }) => setBooking(false)),
-      );
-    } else {
-      cols.forEach((e, i) =>
-        e.forEach(({ booking: [_, setBooking] }, j) =>
-          setBooking(data()![i][j]),
-        ),
-      );
-    }
-  });
-
-  createEffect(() => {
     const start =
       appContext().view === 'Week'
         ? startOfWeek(appContext().date, { weekStartsOn: 1 })
         : appContext().date;
 
-    days.forEach(([_, setDay], i) => setDay(addDays(start, i)));
+    days.forEach(([, setDay], i) => setDay(addDays(start, i)));
 
     cols.forEach((e, i) =>
-      e.forEach(({ date: [_, setDate] }, j) =>
-        setDate(addHours(addDays(start, i), j)),
-      ),
+      e.forEach(([, setDate], j) => setDate(addHours(addDays(start, i), j))),
     );
   });
 
+  createEffect(() => {
+    setCurrentPos({ row: -1, col: -1 });
+
+    const f = format(currentTime(), 'dMyH');
+
+    cols.forEach((element, i) => {
+      element.forEach(([d], j) => {
+        if (format(d(), 'dMyH') === f)
+          setCurrentPos({ col: i + 2, row: j + 1 });
+      });
+    });
+  });
+
+  const gridStyle =
+    appContext().view === 'Week'
+      ? 'grid-cols-[80px,_repeat(7,1fr)]'
+      : 'grid-cols-[80px,_repeat(1,1fr)]';
+
   return (
     <>
-      <div class='basis-[100px] shrink-0 flex overflow-y-scroll'>
-        <div class='basis-[80px] shrink-0 border-b'></div>
+      <div
+        class={`${gridStyle} border-b basis-[100px] shrink-0 grid overflow-y-scroll`}
+      >
+        <div></div>
         <For each={days}>
           {([day]) => <DayHeader day={day()} currentTime={currentTime()} />}
         </For>
       </div>
 
-      <div class='grow flex overflow-auto'>
-        <div class='flex flex-col basis-[80px] shrink-0'>
-          <For each={timeSlots}>{(slot) => <TimeSlot time={slot} />}</For>
-        </div>
+      <div
+        class={`${gridStyle} grid-flow-col grow overflow-auto grid grid-rows-[repeat(24,50px)]`}
+      >
+        <Index each={Array.from({ length: 24 })}>
+          {(_, i) => <TimeSlot index={i} />}
+        </Index>
+
         <For each={cols}>
-          {(col) => (
-            <div class='flex flex-col grow'>
-              <For each={col}>
-                {({ date: [date], booking: [booking] }) => (
-                  <Slot
-                    bool={booking()}
-                    date={date()}
-                    currentTime={currentTime()}
-                  />
-                )}
-              </For>
-            </div>
+          {(col, i) => (
+            <For each={col}>
+              {([date], j) => {
+                return (
+                  <div
+                    onClick={() => console.log(format(date(), 'd H'))}
+                    style={{
+                      'grid-area': gridArea(j() + 1, i() + 2, j() + 1, i() + 2),
+                    }}
+                    class='border-l border-b cursor-pointer hover:bg-neutral-900'
+                  ></div>
+                );
+              }}
+            </For>
           )}
         </For>
+        <Show when={!data.loading}>
+          <For each={data()}>
+            {(e, i) => (
+              <For each={e}>
+                {(a) => (
+                  <div
+                    onClick={() => console.log('click booking')}
+                    class='bg-orange-500 pr-4 bg-clip-content cursor-pointer hover:bg-orange-400'
+                    style={{
+                      'grid-area': gridArea(
+                        a.start + 1,
+                        i() + 2,
+                        a.end + 1,
+                        i() + 2,
+                      ),
+                    }}
+                  ></div>
+                )}
+              </For>
+            )}
+          </For>
+        </Show>
+        <Show when={currentPos().row !== -1}>
+          <div
+            class='pointer-events-none relative'
+            style={{
+              'grid-area': gridArea(
+                currentPos().row,
+                currentPos().col,
+                currentPos().row,
+                currentPos().col,
+              ),
+              top: (100 / 60) * getMinutes(currentTime()) + '%',
+            }}
+          >
+            <div class='bg-red-500 w-full h-[2px] absolute'></div>
+          </div>
+        </Show>
       </div>
     </>
   );
+}
+
+function gridArea(a: number, b: number, c: number, d: number) {
+  return `${a}/${b}/${c}/${d}`;
 }
 
 export const title = 'Kalendar';

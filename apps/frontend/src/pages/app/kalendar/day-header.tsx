@@ -7,7 +7,7 @@ export function DayHeader(props: { day: Date; currentTime: Date }) {
       : '';
 
   return (
-    <div class='grow basis-full border-b border-l flex flex-col gap-2 justify-center items-center'>
+    <div class='border-l flex flex-col gap-2 justify-center items-center'>
       <div class={style()}>{format(props.day, 'EEEEEE')}</div>
       <div class={style()}>{format(props.day, 'd')}</div>
     </div>

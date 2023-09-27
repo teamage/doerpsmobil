@@ -43,13 +43,11 @@ export async function getBookings(dates: Date[]) {
         resolve();
       }, 2000);
     });
-
-    return dates.map((_, i) =>
-      Array.from({ length: 24 }, (_, j) => {
-        if (i === 0 && j >= 5) return true;
-        return false;
-      }),
-    );
+    const r = getRandomInt(0, 7);
+    return dates.map((_, i) => {
+      if (i === r) return [{ start: 3, end: 5, from: 'from', to: 'to' }];
+      return [];
+    });
   } catch (cause) {
     if (isTRPCClientError(cause)) {
       console.log('isTRPCClientError');
@@ -61,4 +59,10 @@ export async function getBookings(dates: Date[]) {
     }
     return [];
   }
+}
+
+function getRandomInt(min: number, max: number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
