@@ -1,12 +1,5 @@
 import { gridArea } from '#/util';
-
-// import type from backend ?
-type Booking = {
-  start: number;
-  end: number;
-  from: string;
-  to: string;
-};
+import type { Booking } from '../../../../../backend/src/procedures/bookings/list';
 
 export function Booking(props: { dayIndex: number; booking: Booking }) {
   return (

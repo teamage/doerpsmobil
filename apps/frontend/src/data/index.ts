@@ -5,6 +5,7 @@ import {
 } from '@trpc/client';
 import type { AppRouter } from '#backend';
 import { auth } from '#/firebase';
+import { format } from 'date-fns';
 
 const trpc = createTRPCProxyClient<AppRouter>({
   links: [
@@ -38,16 +39,10 @@ export async function addBooking() {
 
 export async function getBookings(dates: Date[]) {
   try {
-    await new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 2000);
-    });
-    const r = getRandomInt(0, 7);
-    return dates.map((_, i) => {
-      if (i === r) return [{ start: 3, end: 5, from: 'from', to: 'to' }];
-      return [];
-    });
+    const result = await trpc.bookings.list.query(
+      dates.map((d) => format(d, 'dMy H')),
+    );
+    return result;
   } catch (cause) {
     if (isTRPCClientError(cause)) {
       console.log('isTRPCClientError');
@@ -59,10 +54,4 @@ export async function getBookings(dates: Date[]) {
     }
     return [];
   }
-}
-
-function getRandomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
 }
