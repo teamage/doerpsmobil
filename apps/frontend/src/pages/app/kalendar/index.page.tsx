@@ -8,13 +8,16 @@ import {
   onCleanup,
 } from 'solid-js';
 
-import { addDays, addHours, getMinutes, startOfWeek } from 'date-fns';
+import { addDays, addHours, startOfWeek } from 'date-fns';
 
 import { getBookings } from '#/data';
 import { format, toBerlinDate } from '#/util';
 import { useAppContext } from '#/context/use-app-context';
 import { DayHeader } from '#/pages/app/kalendar/day-header';
 import { TimeSlot } from '#/pages/app/kalendar/timeslot';
+import { Slot } from '#/pages/app/kalendar/slot';
+import { Booking } from '#/pages/app/kalendar/booking';
+import { TimeIndicator } from '#/pages/app/kalendar/time-indicator';
 
 export function Page() {
   const appContext = useAppContext();
@@ -106,65 +109,33 @@ export function Page() {
         <For each={cols}>
           {(col, i) => (
             <For each={col}>
-              {([date], j) => {
-                return (
-                  <div
-                    onClick={() => console.log(format(date(), 'd H'))}
-                    style={{
-                      'grid-area': gridArea(j() + 1, i() + 2, j() + 1, i() + 2),
-                    }}
-                    class='border-l border-b cursor-pointer hover:bg-neutral-900'
-                  ></div>
-                );
-              }}
+              {([date], j) => (
+                <Slot date={date()} dayIndex={i()} timeIndex={j()} />
+              )}
             </For>
           )}
         </For>
+
         <Show when={!data.loading}>
           <For each={data()}>
             {(e, i) => (
               <For each={e}>
-                {(a) => (
-                  <div
-                    onClick={() => console.log('click booking')}
-                    class='bg-orange-500 pr-4 bg-clip-content cursor-pointer hover:bg-orange-400'
-                    style={{
-                      'grid-area': gridArea(
-                        a.start + 1,
-                        i() + 2,
-                        a.end + 1,
-                        i() + 2,
-                      ),
-                    }}
-                  ></div>
-                )}
+                {(a) => <Booking booking={a} dayIndex={i()} />}
               </For>
             )}
           </For>
         </Show>
+
         <Show when={currentPos().row !== -1}>
-          <div
-            class='pointer-events-none relative'
-            style={{
-              'grid-area': gridArea(
-                currentPos().row,
-                currentPos().col,
-                currentPos().row,
-                currentPos().col,
-              ),
-              top: (100 / 60) * getMinutes(currentTime()) + '%',
-            }}
-          >
-            <div class='bg-red-500 w-full h-[2px] absolute'></div>
-          </div>
+          <TimeIndicator
+            row={currentPos().row}
+            col={currentPos().col}
+            currentTime={currentTime()}
+          />
         </Show>
       </div>
     </>
   );
-}
-
-function gridArea(a: number, b: number, c: number, d: number) {
-  return `${a}/${b}/${c}/${d}`;
 }
 
 export const title = 'Kalendar';
